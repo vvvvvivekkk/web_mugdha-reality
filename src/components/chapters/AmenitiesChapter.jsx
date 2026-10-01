@@ -1,4 +1,5 @@
 import Chapter from '../Chapter';
+import { REAL } from '../../lib/images';
 
 const topAmenities = [
   'Swimming Pool', 'Clubhouse', 'Sky Lounge', 'Mini Theater',
@@ -11,6 +12,7 @@ export default function AmenitiesChapter() {
     <Chapter
       id="amenities"
       bg="img/magnus-detail.jpg"
+      bgRemote={REAL.hero2}
       prefix="we design what's"
       script="inside."
       body={

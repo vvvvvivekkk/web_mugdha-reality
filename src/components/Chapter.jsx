@@ -13,6 +13,7 @@ import Compass from './Compass';
 export default function Chapter({
   id,
   bg,
+  bgRemote,                 // optional live photo URL layered over the local fallback
   prefix,
   script,
   prefixAlign = 'before',   // 'before' places serif above script
@@ -23,6 +24,7 @@ export default function Chapter({
   compassLabel = 'Scroll to explore',
 }) {
   const ref = useRef(null);
+  const bgImage = bgRemote ? `url('${bgRemote}'), url('${bg}')` : `url('${bg}')`;
 
   useEffect(() => {
     const el = ref.current;
@@ -38,7 +40,7 @@ export default function Chapter({
 
   return (
     <section id={id} ref={ref} className="chapter-section">
-      <div className="chapter-bg" style={{ backgroundImage: `url('${bg}')` }} />
+      <div className="chapter-bg" style={{ backgroundImage: bgImage }} />
       <div className="chapter-overlay" />
 
       <div className="relative w-full h-screen flex flex-col justify-between py-24 lg:py-32">

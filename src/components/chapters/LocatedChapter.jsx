@@ -1,10 +1,12 @@
 import Chapter from '../Chapter';
+import { REAL } from '../../lib/images';
 
 export default function LocatedChapter() {
   return (
     <Chapter
       id="located"
       bg="img/hero3.jpg"
+      bgRemote={REAL.hero3}
       prefix="we build where"
       script="located."
       body={

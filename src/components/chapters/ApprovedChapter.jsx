@@ -1,10 +1,12 @@
 import Chapter from '../Chapter';
+import { REAL } from '../../lib/images';
 
 export default function ApprovedChapter() {
   return (
     <Chapter
       id="approved"
       bg="img/magnus-day.jpg"
+      bgRemote={REAL.magnus4k}
       prefix="we deliver land"
       script="approved."
       body={

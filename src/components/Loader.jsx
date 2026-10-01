@@ -3,13 +3,13 @@ import { useEffect, useState } from 'react';
 export default function Loader() {
   const [gone, setGone] = useState(false);
   useEffect(() => {
-    document.body.style.overflow = 'hidden';
     const t = setTimeout(() => {
       setGone(true);
-      document.body.style.overflow = 'auto';
-      // trigger hero reveals immediately
-      document.querySelectorAll('#hero .fade-up, #hero .split').forEach(el => el.classList.add('in'));
-    }, 1800);
+      // trigger hero/first-chapter reveals
+      document.querySelectorAll('.fade-up, .split').forEach(el => {
+        if (el.getBoundingClientRect().top < window.innerHeight) el.classList.add('in');
+      });
+    }, 1600);
     return () => clearTimeout(t);
   }, []);
 
