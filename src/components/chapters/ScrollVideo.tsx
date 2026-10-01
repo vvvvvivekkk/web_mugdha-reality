@@ -42,8 +42,12 @@ export default function ScrollVideo() {
     window.addEventListener('scroll', onScroll, { passive: true });
     onScroll();
 
-    const onLoaded = () => setReady(true);
-    video.addEventListener('loadeddata', onLoaded);
+    const onReady = () => setReady(true);
+    video.addEventListener('loadedmetadata', onReady);
+    video.addEventListener('loadeddata', onReady);
+    video.addEventListener('canplay', onReady);
+    // Never let a slow download hold the page hostage — poster carries the scene
+    const fallback = setTimeout(() => setReady(true), 4000);
     // iOS: a muted inline play–pause unlocks programmatic seeking
     const unlock = () => {
       video.play().then(() => video.pause()).catch(() => {});
@@ -73,8 +77,11 @@ export default function ScrollVideo() {
     return () => {
       alive = false;
       cancelAnimationFrame(raf);
+      clearTimeout(fallback);
       window.removeEventListener('scroll', onScroll);
-      video.removeEventListener('loadeddata', onLoaded);
+      video.removeEventListener('loadedmetadata', onReady);
+      video.removeEventListener('loadeddata', onReady);
+      video.removeEventListener('canplay', onReady);
       window.removeEventListener('touchstart', unlock);
     };
   }, []);
@@ -84,6 +91,12 @@ export default function ScrollVideo() {
   return (
     <section id="top" ref={sectionRef} style={{ height: '400vh' }} className="relative bg-bg">
       <div className="sticky top-0 h-screen overflow-hidden">
+        {/* Poster paints the scene instantly; video fades in over it when ready */}
+        <img
+          src="video/poster.jpg"
+          alt=""
+          className="absolute inset-0 w-full h-full object-cover"
+        />
         <video
           ref={videoRef}
           src="video/build.mp4"
@@ -91,7 +104,8 @@ export default function ScrollVideo() {
           muted
           playsInline
           preload="auto"
-          className="absolute inset-0 w-full h-full object-cover"
+          className="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000"
+          style={{ opacity: ready ? 1 : 0 }}
         />
         {/* Cinematic grade overlay */}
         <div
@@ -166,10 +180,11 @@ export default function ScrollVideo() {
           </svg>
         </div>
 
-        {/* Loading shimmer until first frame decodes */}
+        {/* Tiny corner spinner while the film streams in — never blocks the page */}
         {!ready && (
-          <div className="absolute inset-0 bg-bg flex items-center justify-center">
-            <div className="loader-mark" />
+          <div className="absolute bottom-8 right-8 flex items-center gap-3 text-[10px] tracking-[0.3em] uppercase text-cream/50">
+            <div className="loader-mark" style={{ width: 18, height: 18 }} />
+            <span>Loading film</span>
           </div>
         )}
       </div>
