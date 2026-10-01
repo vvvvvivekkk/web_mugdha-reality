@@ -6,7 +6,7 @@ import Loader from './components/Loader';
 import Nav from './components/Nav';
 import Footer from './components/Footer';
 
-import ConstructionChapter from './components/chapters/ConstructionChapter';
+import ScrollVideo from './components/chapters/ScrollVideo';
 import ApprovedChapter from './components/chapters/ApprovedChapter';
 import LocatedChapter from './components/chapters/LocatedChapter';
 import AmenitiesChapter from './components/chapters/AmenitiesChapter';
@@ -26,7 +26,7 @@ export default function App() {
       <div id="scrollBar"><div id="scrollBarFill" /></div>
       <Nav />
 
-      <ConstructionChapter />
+      <ScrollVideo />
       <ApprovedChapter />
       <LocatedChapter />
       <AmenitiesChapter />
