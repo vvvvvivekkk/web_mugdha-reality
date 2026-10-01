@@ -1,10 +1,10 @@
 const links = [
-  ['Projects', '#projects'],
+  ['Approved', '#approved'],
+  ['Located', '#located'],
   ['Amenities', '#amenities'],
-  ['Connectivity', '#connectivity'],
-  ['EMI', '#emi'],
-  ['Story', '#story'],
-  ['Contact', '#contact'],
+  ['Owned', '#owned'],
+  ['Financed', '#financed'],
+  ['Contacted', '#contacted'],
 ];
 
 export default function Nav() {

@@ -5,16 +5,15 @@ import { useScrollProgress } from './hooks/useScrollProgress';
 import Loader from './components/Loader';
 import Nav from './components/Nav';
 import Hero from './components/Hero';
-import TrustMarquee from './components/TrustMarquee';
-import Flagship from './components/Flagship';
-import AmenityMarquee from './components/AmenityMarquee';
-import Projects from './components/Projects';
-import Connectivity from './components/Connectivity';
-import EMI from './components/EMI';
-import Testimonials from './components/Testimonials';
-import Story from './components/Story';
-import Contact from './components/Contact';
 import Footer from './components/Footer';
+
+import ApprovedChapter from './components/chapters/ApprovedChapter';
+import LocatedChapter from './components/chapters/LocatedChapter';
+import AmenitiesChapter from './components/chapters/AmenitiesChapter';
+import OwnedChapter from './components/chapters/OwnedChapter';
+import FinancedChapter from './components/chapters/FinancedChapter';
+import TrustedChapter from './components/chapters/TrustedChapter';
+import ContactedChapter from './components/chapters/ContactedChapter';
 
 export default function App() {
   useSmoothScroll();
@@ -26,16 +25,16 @@ export default function App() {
       <Loader />
       <div id="scrollBar"><div id="scrollBarFill" /></div>
       <Nav />
+
       <Hero />
-      <TrustMarquee />
-      <Flagship />
-      <AmenityMarquee />
-      <Projects />
-      <Connectivity />
-      <EMI />
-      <Testimonials />
-      <Story />
-      <Contact />
+      <ApprovedChapter />
+      <LocatedChapter />
+      <AmenitiesChapter />
+      <OwnedChapter />
+      <FinancedChapter />
+      <TrustedChapter />
+      <ContactedChapter />
+
       <Footer />
 
       {/* Fixed WhatsApp (mobile) */}

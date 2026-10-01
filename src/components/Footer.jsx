@@ -25,18 +25,18 @@ export default function Footer() {
           <div>
             <div className="text-xs text-cream/40 uppercase tracking-wider mb-4">Projects</div>
             <ul className="space-y-2 text-sm text-cream/70">
-              <li><a href="#projects" className="hover:text-gold transition">Magnus Smart City</a></li>
-              <li><a href="#projects" className="hover:text-gold transition">MIRAI</a></li>
-              <li><a href="#projects" className="hover:text-gold transition">Marvel Smart City</a></li>
+              <li><a href="#owned" className="hover:text-gold transition">Magnus Smart City</a></li>
+              <li><a href="#owned" className="hover:text-gold transition">MIRAI</a></li>
+              <li><a href="#owned" className="hover:text-gold transition">Marvel Smart City</a></li>
             </ul>
           </div>
           <div>
             <div className="text-xs text-cream/40 uppercase tracking-wider mb-4">Company</div>
             <ul className="space-y-2 text-sm text-cream/70">
-              <li><a href="#story" className="hover:text-gold transition">Our Story</a></li>
-              <li><a href="#approvals" className="hover:text-gold transition">Approvals &amp; RERA</a></li>
-              <li><a href="#contact" className="hover:text-gold transition">Careers</a></li>
-              <li><a href="#contact" className="hover:text-gold transition">Press</a></li>
+              <li><a href="#approved" className="hover:text-gold transition">Approvals &amp; RERA</a></li>
+              <li><a href="#located" className="hover:text-gold transition">Connectivity</a></li>
+              <li><a href="#financed" className="hover:text-gold transition">Financing</a></li>
+              <li><a href="#contacted" className="hover:text-gold transition">Contact</a></li>
             </ul>
           </div>
           <div>

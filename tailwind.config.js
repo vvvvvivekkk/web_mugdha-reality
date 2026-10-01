@@ -15,6 +15,7 @@ export default {
       },
       fontFamily: {
         display: ['Fraunces', 'serif'],
+        script:  ['"Great Vibes"', 'cursive'],
         sans:    ['Inter', 'system-ui', 'sans-serif'],
       },
       animation: {
