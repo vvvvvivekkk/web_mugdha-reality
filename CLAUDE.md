@@ -62,7 +62,7 @@ public/
 
 ## The scroll-video system (ScrollVideo.tsx)
 
-- Section is 400vh; a sticky 100vh child pins the `<video>`
+- Section is 200vh; a sticky 100vh child pins the `<video>`
 - rAF loop: damped scroll progress → `video.currentTime = p * duration`
 - `PHASES` array maps progress → overlay words
   (the land. / poured. / raised. / home.) — tune the `at` values there
@@ -74,9 +74,17 @@ public/
 all-intra or seeking stutters:
 
 ```bash
-ffmpeg -i input.mp4 -an -c:v libx264 -g 1 -keyint_min 1 -crf 28 \
-  -preset slow -pix_fmt yuv420p -movflags +faststart public/video/build.mp4
+ffmpeg -i input.mp4 -vf "setpts=PTS/3,unsharp=5:5:0.4" -r 24 -an \
+  -c:v libx264 -g 1 -keyint_min 1 -crf 18 -preset slow -pix_fmt yuv420p \
+  -movflags +faststart public/video/build.mp4
 ```
+
+(The current film runs at 3× the Gemini source speed — `setpts=PTS/3` —
+with a light unsharp pass for fullscreen crispness. CRF 18, not 28: the
+clip is fullscreen on laptops, softness shows.) The component also
+prefetches the whole mp4 as a blob and swaps it in as `src` once
+downloaded, so scrubbing is served from memory; a thin gold progress bar
+(bottom-right) tracks the fetch.
 
 The raw Gemini original lives at repo root
 (`gemini_generated_video_bb35f24f.mp4`) — source material only, never

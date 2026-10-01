@@ -3,12 +3,20 @@ import { useEffect, useRef, useState } from 'react';
 /**
  * ScrollVideo — the zero-to-hero opening shot.
  *
- * A 400vh pinned section. The AI-generated drone film (bare Deccan land →
+ * A 200vh pinned section. The AI-generated drone film (bare Deccan land →
  * foundations & mixers → crane raising walls → finished villa with pool)
  * is scrubbed by scroll: video.currentTime = scrollProgress × duration,
  * with damping so the scrub feels like drone footage, not a slider.
  * The video is encoded all-intra (every frame a keyframe) so seeking is
  * frame-accurate and instant.
+ *
+ * Loading strategy (poster paints instantly, nothing gates the page):
+ * 1. The <video> streams progressively, so scrubbing works as data arrives;
+ *    seeks are clamped to buffered ranges so an unbuffered target shows the
+ *    nearest available frame instead of freezing.
+ * 2. In parallel the whole file is fetched as a blob (thin progress bar,
+ *    bottom-right) and swapped in as src — from then on every byte is local
+ *    and seeking is instant in both directions.
  */
 
 const PHASES = [
@@ -26,17 +34,35 @@ export default function ScrollVideo() {
   const targetP = useRef(0);
   const [phaseIdx, setPhaseIdx] = useState(0);
   const [ready, setReady] = useState(false);
+  const [dl, setDl] = useState(0); // whole-file preload progress, 0..1
 
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
-    let raf = 0, alive = true, cur = 0, seekBusy = false;
+    let raf = 0, alive = true, cur = 0, seekStarted = 0;
 
     // Never issue a new seek while one is in flight — otherwise the
     // browser is flooded with cancelled seeks and the main thread jams.
-    const onSeeked = () => { seekBusy = false; };
+    // seekStarted doubles as a watchdog: if 'seeked' never fires (seek
+    // stalled waiting on network data), give up after 250ms so the scrub
+    // can never freeze permanently on a slow connection.
+    const seekBusy = () => seekStarted > 0 && performance.now() - seekStarted < 250;
+    const onSeeked = () => { seekStarted = 0; };
     video.addEventListener('seeked', onSeeked);
     video.addEventListener('error', onSeeked);
+
+    // If the target time isn't buffered yet, scrub to the nearest buffered
+    // moment instead — the frame updates and never freezes mid-film.
+    const clampToBuffered = (t: number) => {
+      const b = video.buffered;
+      let best = t, bestDist = Infinity;
+      for (let i = 0; i < b.length; i++) {
+        const c = Math.max(b.start(i), Math.min(b.end(i), t));
+        const dist = Math.abs(c - t);
+        if (dist < bestDist) { bestDist = dist; best = c; }
+      }
+      return best;
+    };
 
     const onScroll = () => {
       const el = sectionRef.current;
@@ -54,6 +80,11 @@ export default function ScrollVideo() {
     video.addEventListener('canplay', onReady);
     // Never let a slow download hold the page hostage — poster carries the scene
     const fallback = setTimeout(() => setReady(true), 4000);
+    // Chrome defers media loading in background tabs — kick it when the
+    // tab becomes visible, and retry if the first load never produced data.
+    const kickLoad = () => { if (video.readyState === 0) video.load(); };
+    document.addEventListener('visibilitychange', kickLoad);
+    const retryLoad = setTimeout(kickLoad, 6000);
     // iOS: a muted inline play–pause unlocks programmatic seeking
     const unlock = () => {
       video.play().then(() => video.pause()).catch(() => {});
@@ -61,16 +92,44 @@ export default function ScrollVideo() {
     };
     window.addEventListener('touchstart', unlock, { once: true, passive: true });
 
+    // Preload the entire film as a blob so every seek is served from memory.
+    const aborter = new AbortController();
+    let blobUrl = '';
+    (async () => {
+      try {
+        const res = await fetch('video/build.mp4', { signal: aborter.signal });
+        if (!res.ok || !res.body) return;
+        const total = Number(res.headers.get('content-length')) || 0;
+        const reader = res.body.getReader();
+        const chunks: BlobPart[] = [];
+        let got = 0;
+        for (;;) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          chunks.push(value);
+          got += value.byteLength;
+          if (total) setDl(Math.min(got / total, 0.999));
+        }
+        if (!alive) return;
+        blobUrl = URL.createObjectURL(new Blob(chunks, { type: 'video/mp4' }));
+        const keepTime = video.currentTime;
+        video.src = blobUrl;
+        video.load();
+        video.addEventListener('loadedmetadata', () => { video.currentTime = keepTime; }, { once: true });
+        setDl(1);
+      } catch { /* network hiccup — progressive streaming still works */ }
+    })();
+
     const tick = () => {
       if (!alive) return;
       cur += (targetP.current - cur) * 0.12; // damped — drone-footage feel
       const p = Math.abs(cur - targetP.current) < 0.0005 ? targetP.current : cur;
 
       const d = video.duration;
-      if (d && isFinite(d) && !seekBusy && video.readyState >= 1) {
-        const t = p * Math.max(0, d - 0.05);
+      if (d && isFinite(d) && !seekBusy() && video.readyState >= 1) {
+        const t = clampToBuffered(p * Math.max(0, d - 0.05));
         if (Math.abs(video.currentTime - t) > 1 / 30) {
-          seekBusy = true;
+          seekStarted = performance.now();
           video.currentTime = t;
         }
       }
@@ -85,6 +144,10 @@ export default function ScrollVideo() {
       alive = false;
       cancelAnimationFrame(raf);
       clearTimeout(fallback);
+      clearTimeout(retryLoad);
+      aborter.abort();
+      if (blobUrl) URL.revokeObjectURL(blobUrl);
+      document.removeEventListener('visibilitychange', kickLoad);
       window.removeEventListener('scroll', onScroll);
       video.removeEventListener('seeked', onSeeked);
       video.removeEventListener('error', onSeeked);
@@ -98,7 +161,7 @@ export default function ScrollVideo() {
   const ph = PHASES[phaseIdx];
 
   return (
-    <section id="top" ref={sectionRef} style={{ height: '400vh' }} className="relative bg-bg">
+    <section id="top" ref={sectionRef} style={{ height: '200vh' }} className="relative bg-bg">
       <div className="sticky top-0 h-screen overflow-hidden">
         {/* Poster paints the scene instantly; video fades in over it when ready */}
         <img
@@ -131,8 +194,8 @@ export default function ScrollVideo() {
           <div className="section-label left"><span>HMDA · RERA P02400010251 · Est. 2016</span></div>
         </div>
 
-        {/* Phase words */}
-        <div className="absolute inset-0 pointer-events-none flex flex-col justify-center">
+        {/* Phase words — low-left over the film, reference-reel style */}
+        <div className="absolute inset-0 pointer-events-none flex flex-col justify-end pb-28 lg:pb-32">
           <div className="max-w-7xl mx-auto px-6 lg:px-10 w-full">
             <span
               key={`p${phaseIdx}`}
@@ -189,11 +252,13 @@ export default function ScrollVideo() {
           </svg>
         </div>
 
-        {/* Tiny corner spinner while the film streams in — never blocks the page */}
-        {!ready && (
-          <div className="absolute bottom-8 right-8 flex items-center gap-3 text-[10px] tracking-[0.3em] uppercase text-cream/50">
-            <div className="loader-mark" style={{ width: 18, height: 18 }} />
+        {/* Thin film-download bar while the full file streams into memory */}
+        {dl < 1 && (
+          <div className="absolute bottom-4 right-6 lg:right-10 flex items-center gap-3 text-[10px] tracking-[0.3em] uppercase text-cream/50">
             <span>Loading film</span>
+            <div className="w-28 h-px bg-cream/20 overflow-hidden">
+              <div className="h-full bg-gold transition-[width] duration-200" style={{ width: `${Math.round(dl * 100)}%` }} />
+            </div>
           </div>
         )}
       </div>
