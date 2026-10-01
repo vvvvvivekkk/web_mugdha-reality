@@ -10,6 +10,6 @@ export const REAL = {
 };
 
 /** CSS background-image stack: remote first (paints on top), local fallback under it. */
-export function bgStack(remote, local) {
+export function bgStack(remote: string, local: string): string {
   return `url('${remote}'), url('${local}')`;
 }

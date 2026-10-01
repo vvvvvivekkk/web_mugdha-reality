@@ -7,10 +7,10 @@ import { useEffect } from 'react';
  */
 export function useSmoothScroll() {
   useEffect(() => {
-    const handler = (e) => {
-      const link = e.target.closest('a[href^="#"]');
+    const handler = (e: MouseEvent) => {
+      const link = (e.target as Element | null)?.closest?.('a[href^="#"]');
       if (!link) return;
-      const target = document.querySelector(link.getAttribute('href'));
+      const target = document.querySelector(link.getAttribute('href')!);
       if (target) {
         e.preventDefault();
         target.scrollIntoView({ behavior: 'smooth', block: 'start' });

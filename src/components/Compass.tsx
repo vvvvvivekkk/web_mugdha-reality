@@ -1,4 +1,4 @@
-export default function Compass({ label = 'Scroll to explore' }) {
+export default function Compass({ label = 'Scroll to explore' }: { label?: string }) {
   return (
     <div className="flex flex-col items-center gap-3">
       <div className="compass">

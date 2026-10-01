@@ -1,9 +1,9 @@
-import { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 export default function ContactedChapter() {
-  const [budget, setBudget] = useState(null);
+  const [budget, setBudget] = useState<string | null>(null);
   const [msg, setMsg] = useState('');
-  const ref = useRef(null);
+  const ref = useRef<HTMLElement>(null);
 
   useEffect(() => {
     const el = ref.current; if (!el) return;
@@ -12,10 +12,10 @@ export default function ContactedChapter() {
     return () => io.disconnect();
   }, []);
 
-  const submit = (e) => {
+  const submit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setMsg('✓ Thank you. We will call you within one business hour.');
-    e.target.reset();
+    e.currentTarget.reset();
     setBudget(null);
     setTimeout(() => setMsg(''), 6000);
   };

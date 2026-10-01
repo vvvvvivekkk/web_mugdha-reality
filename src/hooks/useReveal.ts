@@ -7,11 +7,11 @@ import { useEffect } from 'react';
 export function useReveal() {
   useEffect(() => {
     // Split text first
-    document.querySelectorAll('.split:not([data-split-done])').forEach(el => {
+    document.querySelectorAll<HTMLElement>('.split:not([data-split-done])').forEach(el => {
       el.dataset.splitDone = '1';
       const mode = el.dataset.split || 'word';
-      const delayBase = parseFloat(el.dataset.delay || 0);
-      const text = el.textContent;
+      const delayBase = parseFloat(el.dataset.delay || '0');
+      const text = el.textContent ?? '';
       el.textContent = '';
       if (mode === 'word') {
         const parts = text.split(' ');
@@ -33,30 +33,31 @@ export function useReveal() {
       }
     });
 
-    const animateCounter = (el) => {
+    const animateCounter = (el: HTMLElement) => {
       if (el.dataset.counted) return;
       el.dataset.counted = '1';
-      const target = +el.dataset.counter;
+      const target = Number(el.dataset.counter);
       const dur = 1800;
       const start = performance.now();
-      function step(now) {
+      const step = (now: number) => {
         const t = Math.min(1, (now - start) / dur);
         const eased = 1 - Math.pow(1 - t, 3);
-        el.textContent = Math.round(target * eased);
+        el.textContent = String(Math.round(target * eased));
         if (t < 1) requestAnimationFrame(step);
-      }
+      };
       requestAnimationFrame(step);
     };
 
     const io = new IntersectionObserver(entries => {
       entries.forEach(e => {
         if (e.isIntersecting) {
-          e.target.classList.add('in');
-          if (e.target.dataset.counter !== undefined) animateCounter(e.target);
+          const el = e.target as HTMLElement;
+          el.classList.add('in');
+          if (el.dataset.counter !== undefined) animateCounter(el);
         }
       });
     }, { threshold: 0.12 });
-    document.querySelectorAll('.fade-up, .fade-in, .scale-in, .split, [data-counter]').forEach(el => io.observe(el));
+    document.querySelectorAll<HTMLElement>('.fade-up, .fade-in, .scale-in, .split, [data-counter]').forEach(el => io.observe(el));
     return () => io.disconnect();
   }, []);
 }

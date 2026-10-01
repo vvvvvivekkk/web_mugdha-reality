@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 
-function inr(n) {
+function inr(n: number): string {
   n = Math.round(n);
   const s = String(n);
   if (s.length <= 3) return '₹' + s;
@@ -16,7 +16,7 @@ export default function FinancedChapter() {
   const [rate, setRate] = useState(8.75);
   const [emi, setEmi] = useState(17381);
   const lastRef = useRef(17381);
-  const ref = useRef(null);
+  const ref = useRef<HTMLElement>(null);
 
   useEffect(() => {
     const el = ref.current;
@@ -35,8 +35,8 @@ export default function FinancedChapter() {
     const target = P * r * Math.pow(1 + r, n) / (Math.pow(1 + r, n) - 1);
     const start = lastRef.current;
     const dur = 400, t0 = performance.now();
-    let raf;
-    const step = (now) => {
+    let raf = 0;
+    const step = (now: number) => {
       const t = Math.min(1, (now - t0) / dur);
       const val = start + (target - start) * (1 - Math.pow(1 - t, 3));
       setEmi(val);
@@ -85,7 +85,17 @@ export default function FinancedChapter() {
   );
 }
 
-function Slider({ label, value, min, max, step, val, onChange }) {
+interface SliderProps {
+  label: string;
+  value: string;
+  min: number;
+  max: number;
+  step: number;
+  val: number;
+  onChange: (v: number) => void;
+}
+
+function Slider({ label, value, min, max, step, val, onChange }: SliderProps) {
   return (
     <div className="mb-4">
       <div className="flex justify-between items-baseline mb-1.5">

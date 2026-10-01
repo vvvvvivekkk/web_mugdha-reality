@@ -2,14 +2,14 @@ import { useEffect, useRef } from 'react';
 
 /** Attach to the outer .tilt-card; it will transform its first .tilt-inner. */
 export function useTilt() {
-  const ref = useRef(null);
+  const ref = useRef<HTMLElement>(null);
   useEffect(() => {
     if (!window.matchMedia('(hover: hover)').matches) return;
     const card = ref.current;
     if (!card) return;
-    const inner = card.querySelector('.tilt-inner');
+    const inner = card.querySelector<HTMLElement>('.tilt-inner');
     if (!inner) return;
-    const move = (e) => {
+    const move = (e: MouseEvent) => {
       const r = card.getBoundingClientRect();
       const x = (e.clientX - r.left) / r.width - 0.5;
       const y = (e.clientY - r.top) / r.height - 0.5;

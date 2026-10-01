@@ -18,11 +18,11 @@ const PHASES = [
   { at: 0.78, prefix: 'one address,', word: 'home.' },
 ];
 
-const clamp01 = (v) => Math.max(0, Math.min(1, v));
+const clamp01 = (v: number) => Math.max(0, Math.min(1, v));
 
 export default function ScrollVideo() {
-  const sectionRef = useRef(null);
-  const videoRef = useRef(null);
+  const sectionRef = useRef<HTMLElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
   const targetP = useRef(0);
   const [phaseIdx, setPhaseIdx] = useState(0);
   const [ready, setReady] = useState(false);
@@ -30,7 +30,7 @@ export default function ScrollVideo() {
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
-    let raf, alive = true, cur = 0;
+    let raf = 0, alive = true, cur = 0;
 
     const onScroll = () => {
       const el = sectionRef.current;

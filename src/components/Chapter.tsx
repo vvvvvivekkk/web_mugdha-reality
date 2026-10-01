@@ -1,5 +1,19 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, type ReactNode } from 'react';
 import Compass from './Compass';
+
+interface ChapterProps {
+  id: string;
+  bg: string;
+  bgRemote?: string;        // optional live photo URL layered over the local fallback
+  prefix?: string;
+  script: string;
+  prefixAlign?: 'before' | 'after';
+  body?: ReactNode;
+  bodyPos?: 'left' | 'right';
+  rightSlot?: ReactNode;    // JSX for the floating card
+  showCompass?: boolean;
+  compassLabel?: string;
+}
 
 /**
  * Full-bleed cinematic chapter — the Abhay-reel pattern.
@@ -13,17 +27,17 @@ import Compass from './Compass';
 export default function Chapter({
   id,
   bg,
-  bgRemote,                 // optional live photo URL layered over the local fallback
+  bgRemote,
   prefix,
   script,
-  prefixAlign = 'before',   // 'before' places serif above script
+  prefixAlign = 'before',
   body,
-  bodyPos = 'right',        // 'right' or 'left'
-  rightSlot,                // JSX for the floating card
+  bodyPos = 'right',
+  rightSlot,
   showCompass = true,
   compassLabel = 'Scroll to explore',
-}) {
-  const ref = useRef(null);
+}: ChapterProps) {
+  const ref = useRef<HTMLElement>(null);
   const bgImage = bgRemote ? `url('${bgRemote}'), url('${bg}')` : `url('${bg}')`;
 
   useEffect(() => {

@@ -4,10 +4,10 @@ A cinematic React 19 + Vite spec redesign of mugdharealty.com, built as a pitch 
 
 ## Stack
 
-- React 19
+- React 19 + TypeScript (strict)
 - Vite 6
 - TailwindCSS 3
-- Lenis (smooth scroll)
+- Scroll-scrubbed all-intra video opener (zero-to-hero construction film)
 - Vanilla JS for animations — no GSAP/Framer bloat
 
 ## Scripts

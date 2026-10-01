@@ -20,7 +20,7 @@ const voices = [
 
 export default function TrustedChapter() {
   const [i, setI] = useState(0);
-  const ref = useRef(null);
+  const ref = useRef<HTMLElement>(null);
   useEffect(() => {
     const el = ref.current; if (!el) return;
     const io = new IntersectionObserver(entries => entries.forEach(e => e.isIntersecting && el.classList.add('in')), { threshold: 0.3 });
