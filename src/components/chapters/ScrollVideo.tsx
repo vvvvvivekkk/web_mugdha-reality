@@ -30,7 +30,13 @@ export default function ScrollVideo() {
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
-    let raf = 0, alive = true, cur = 0;
+    let raf = 0, alive = true, cur = 0, seekBusy = false;
+
+    // Never issue a new seek while one is in flight — otherwise the
+    // browser is flooded with cancelled seeks and the main thread jams.
+    const onSeeked = () => { seekBusy = false; };
+    video.addEventListener('seeked', onSeeked);
+    video.addEventListener('error', onSeeked);
 
     const onScroll = () => {
       const el = sectionRef.current;
@@ -61,9 +67,10 @@ export default function ScrollVideo() {
       const p = Math.abs(cur - targetP.current) < 0.0005 ? targetP.current : cur;
 
       const d = video.duration;
-      if (d && isFinite(d)) {
+      if (d && isFinite(d) && !seekBusy && video.readyState >= 1) {
         const t = p * Math.max(0, d - 0.05);
-        if (Math.abs(video.currentTime - t) > 0.02) {
+        if (Math.abs(video.currentTime - t) > 1 / 30) {
+          seekBusy = true;
           video.currentTime = t;
         }
       }
@@ -79,6 +86,8 @@ export default function ScrollVideo() {
       cancelAnimationFrame(raf);
       clearTimeout(fallback);
       window.removeEventListener('scroll', onScroll);
+      video.removeEventListener('seeked', onSeeked);
+      video.removeEventListener('error', onSeeked);
       video.removeEventListener('loadedmetadata', onReady);
       video.removeEventListener('loadeddata', onReady);
       video.removeEventListener('canplay', onReady);
