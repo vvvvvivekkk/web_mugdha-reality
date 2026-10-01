@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 
-const slides = ['/img/hero1.jpg', '/img/hero3.jpg', '/img/hero2.jpg'];
+const slides = ['img/hero1.jpg', 'img/hero3.jpg', 'img/hero2.jpg'];
 
 export default function Hero() {
   const slideRefs = useRef([]);

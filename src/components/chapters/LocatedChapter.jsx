@@ -4,7 +4,7 @@ export default function LocatedChapter() {
   return (
     <Chapter
       id="located"
-      bg="/img/hero3.jpg"
+      bg="img/hero3.jpg"
       prefix="we build where"
       script="located."
       body={

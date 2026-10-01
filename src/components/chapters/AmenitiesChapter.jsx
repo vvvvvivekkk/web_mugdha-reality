@@ -10,7 +10,7 @@ export default function AmenitiesChapter() {
   return (
     <Chapter
       id="amenities"
-      bg="/img/magnus-detail.jpg"
+      bg="img/magnus-detail.jpg"
       prefix="we design what's"
       script="inside."
       body={

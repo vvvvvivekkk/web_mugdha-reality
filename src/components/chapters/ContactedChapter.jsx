@@ -24,7 +24,7 @@ export default function ContactedChapter() {
 
   return (
     <section id="contacted" ref={ref} className="chapter-section">
-      <div className="chapter-bg" style={{ backgroundImage: "url('/img/hero2.jpg')" }} />
+      <div className="chapter-bg" style={{ backgroundImage: "url('img/hero2.jpg')" }} />
       <div className="chapter-overlay" />
 
       <div className="relative w-full min-h-screen flex flex-col justify-between py-24 lg:py-32">

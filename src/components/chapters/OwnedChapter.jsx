@@ -8,7 +8,7 @@ const projects = [
     loc: 'Bangalore Hwy · 75+ acres',
     price: 'From ₹18.5L',
     specs: ['153–582 sq. yd', 'HMDA + RERA', '35+ amenities'],
-    img: '/img/magnus.jpg',
+    img: 'img/magnus.jpg',
     dot: 'bg-green-400',
   },
   {
@@ -17,7 +17,7 @@ const projects = [
     loc: 'Shadnagar · 6.3 acres',
     price: 'From ₹12L',
     specs: ['Boutique layout', 'HMDA approved', 'Vastu compliant'],
-    img: '/img/hero3.jpg',
+    img: 'img/hero3.jpg',
     dot: 'bg-amber-400',
   },
   {
@@ -26,7 +26,7 @@ const projects = [
     loc: 'Srisailam Hwy · 100+ acres',
     price: 'Reg. open',
     specs: ['Mixed-use township', 'Launch Q2 FY26', 'Early-bird pricing'],
-    img: '/img/magnus-night.jpg',
+    img: 'img/magnus-night.jpg',
     dot: 'bg-sage',
   },
 ];

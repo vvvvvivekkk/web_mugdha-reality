@@ -49,7 +49,7 @@ export default function FinancedChapter() {
 
   return (
     <section id="financed" ref={ref} className="chapter-section">
-      <div className="chapter-bg" style={{ backgroundImage: "url('/img/bg.jpg')" }} />
+      <div className="chapter-bg" style={{ backgroundImage: "url('img/bg.jpg')" }} />
       <div className="chapter-overlay" />
 
       <div className="relative w-full h-screen flex flex-col justify-between py-24 lg:py-32">

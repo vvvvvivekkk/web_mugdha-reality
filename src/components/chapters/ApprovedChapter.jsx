@@ -4,7 +4,7 @@ export default function ApprovedChapter() {
   return (
     <Chapter
       id="approved"
-      bg="/img/magnus-day.jpg"
+      bg="img/magnus-day.jpg"
       prefix="we deliver land"
       script="approved."
       body={
